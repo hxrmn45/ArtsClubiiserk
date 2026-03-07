@@ -1,5 +1,5 @@
 {
-  "name": "ArtsClub IISERK",
+  "name": "artsclub-iiserk",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -34,10 +34,10 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test"
-},
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
