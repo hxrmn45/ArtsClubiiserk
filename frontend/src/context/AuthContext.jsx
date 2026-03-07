@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import api, { setAuthToken } from "@/lib/api";
+import api, { setAuthToken } from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return;
     }
+
     const loadUser = async () => {
       try {
         setAuthToken(token);
@@ -28,24 +29,29 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
+
     loadUser();
   }, [token]);
 
   const login = async (email, password) => {
     const response = await api.post("/auth/login", { email, password });
+
     localStorage.setItem("canvasClubToken", response.data.access_token);
     setToken(response.data.access_token);
     setUser(response.data.user);
     setAuthToken(response.data.access_token);
+
     return response.data.user;
   };
 
   const register = async (name, email, password) => {
     const response = await api.post("/auth/register", { name, email, password });
+
     localStorage.setItem("canvasClubToken", response.data.access_token);
     setToken(response.data.access_token);
     setUser(response.data.user);
     setAuthToken(response.data.access_token);
+
     return response.data.user;
   };
 
@@ -57,7 +63,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ token, user, loading, isAuthenticated: Boolean(token && user), login, register, logout }),
+    () => ({
+      token,
+      user,
+      loading,
+      isAuthenticated: Boolean(token && user),
+      login,
+      register,
+      logout,
+    }),
     [token, user, loading]
   );
 
@@ -67,5 +81,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used inside AuthProvider");
+  return context;
+};
   return context;
 };
