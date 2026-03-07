@@ -78,7 +78,7 @@ export default function AuthPage() {
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-outfit font-semibold transition-colors duration-200 ${
+                className={`flex-1 py-2.5 rounded-lg text-sm font-outfit font-semibold transition-colors ${
                   mode === m
                     ? "bg-white text-stone-900 shadow-sm"
                     : "text-stone-500 hover:text-stone-700"
@@ -172,6 +172,7 @@ export default function AuthPage() {
                 ? "Sign In"
                 : "Create Account"}
             </button>
+
           </form>
 
           <p className="text-center font-manrope text-sm text-stone-500 mt-6">
@@ -192,5 +193,4 @@ export default function AuthPage() {
       </div>
     </div>
   );
-}
 }
