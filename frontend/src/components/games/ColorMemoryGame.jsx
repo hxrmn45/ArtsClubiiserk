@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { toast } from "sonner";
-import api from "@/lib/api";
+import api from "../../lib/api";
 
 const COLORS = [
   "#EA580C", "#06B6D4", "#FDE047", "#22C55E",
@@ -28,7 +28,7 @@ function generateCards(numPairs) {
 }
 
 export default function ColorMemoryGame({ onScoreSubmit }) {
-  const [level, setLevel] = useState(null); // null = pick level, else numPairs
+  const [level, setLevel] = useState(null);
   const [cards, setCards] = useState([]);
   const [flipped, setFlipped] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -36,6 +36,7 @@ export default function ColorMemoryGame({ onScoreSubmit }) {
   const [gameOver, setGameOver] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [elapsed, setElapsed] = useState(0);
+
   const timerRef = useRef(null);
 
   const numPairs = level || 4;
@@ -63,35 +64,66 @@ export default function ColorMemoryGame({ onScoreSubmit }) {
 
   const handleFlip = (id) => {
     if (flipped.length === 2) return;
+
     const card = cards.find((c) => c.id === id);
     if (!card || card.flipped || card.matched) return;
 
     const newFlipped = [...flipped, id];
-    setCards((prev) => prev.map((c) => (c.id === id ? { ...c, flipped: true } : c)));
+
+    setCards((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, flipped: true } : c))
+    );
+
     setFlipped(newFlipped);
 
     if (newFlipped.length === 2) {
       setMoves((m) => m + 1);
-      const [a, b] = newFlipped.map((fid) => cards.find((c) => c.id === fid));
+
+      const [a, b] = newFlipped.map((fid) =>
+        cards.find((c) => c.id === fid)
+      );
+
       if (a.color === b.color) {
         setCards((prev) =>
-          prev.map((c) => (newFlipped.includes(c.id) ? { ...c, matched: true } : c))
+          prev.map((c) =>
+            newFlipped.includes(c.id) ? { ...c, matched: true } : c
+          )
         );
+
         const newMatched = matched + 1;
         setMatched(newMatched);
         setFlipped([]);
+
         if (newMatched === totalPairs) {
           clearInterval(timerRef.current);
           setGameOver(true);
-          const finalElapsed = Math.floor((Date.now() - startTime) / 1000);
+
+          const finalElapsed = Math.floor(
+            (Date.now() - startTime) / 1000
+          );
+
           setElapsed(finalElapsed);
-          const score = Math.max(0, 1000 - moves * 10 - finalElapsed * 2);
-          onScoreSubmit && onScoreSubmit({ game_name: "color-memory", score, duration_seconds: finalElapsed });
+
+          const score = Math.max(
+            0,
+            1000 - moves * 10 - finalElapsed * 2
+          );
+
+          onScoreSubmit &&
+            onScoreSubmit({
+              game_name: "color-memory",
+              score,
+              duration_seconds: finalElapsed,
+            });
         }
       } else {
         setTimeout(() => {
           setCards((prev) =>
-            prev.map((c) => (newFlipped.includes(c.id) ? { ...c, flipped: false } : c))
+            prev.map((c) =>
+              newFlipped.includes(c.id)
+                ? { ...c, flipped: false }
+                : c
+            )
           );
           setFlipped([]);
         }, 900);
@@ -102,17 +134,32 @@ export default function ColorMemoryGame({ onScoreSubmit }) {
   if (!level) {
     return (
       <div className="text-center py-12">
-        <h3 className="font-outfit font-bold text-2xl text-stone-900 mb-2">Color Memory</h3>
-        <p className="font-manrope text-stone-500 mb-8">Match the color pairs. Choose your difficulty:</p>
+        <h3 className="font-outfit font-bold text-2xl text-stone-900 mb-2">
+          Color Memory
+        </h3>
+
+        <p className="font-manrope text-stone-500 mb-8">
+          Match the color pairs. Choose your difficulty:
+        </p>
+
         <div className="flex justify-center gap-4 flex-wrap">
-          {[{ pairs: 4, label: "Easy", sub: "4 pairs" }, { pairs: 6, label: "Medium", sub: "6 pairs" }, { pairs: 8, label: "Hard", sub: "8 pairs" }].map(({ pairs, label, sub }) => (
+          {[
+            { pairs: 4, label: "Easy", sub: "4 pairs" },
+            { pairs: 6, label: "Medium", sub: "6 pairs" },
+            { pairs: 8, label: "Hard", sub: "8 pairs" },
+          ].map(({ pairs, label, sub }) => (
             <button
               key={pairs}
               onClick={() => startGame(pairs)}
               className="px-8 py-4 rounded-2xl bg-white border-2 border-stone-100 hover:border-orange-300 hover:bg-orange-50 transition-all duration-200 group"
             >
-              <p className="font-outfit font-bold text-stone-900 group-hover:text-orange-600">{label}</p>
-              <p className="font-manrope text-stone-400 text-sm">{sub}</p>
+              <p className="font-outfit font-bold text-stone-900 group-hover:text-orange-600">
+                {label}
+              </p>
+
+              <p className="font-manrope text-stone-400 text-sm">
+                {sub}
+              </p>
             </button>
           ))}
         </div>
@@ -120,28 +167,48 @@ export default function ColorMemoryGame({ onScoreSubmit }) {
     );
   }
 
-  const cols = numPairs <= 4 ? 4 : numPairs <= 6 ? 4 : 4;
+  const cols = 4;
 
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="flex items-center justify-between w-full max-w-sm">
         <div className="text-center">
-          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">Moves</p>
-          <p className="font-outfit font-bold text-2xl text-stone-900">{moves}</p>
+          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">
+            Moves
+          </p>
+
+          <p className="font-outfit font-bold text-2xl text-stone-900">
+            {moves}
+          </p>
         </div>
+
         <div className="text-center">
-          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">Matched</p>
-          <p className="font-outfit font-bold text-2xl text-orange-500">{matched}/{totalPairs}</p>
+          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">
+            Matched
+          </p>
+
+          <p className="font-outfit font-bold text-2xl text-orange-500">
+            {matched}/{totalPairs}
+          </p>
         </div>
+
         <div className="text-center">
-          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">Time</p>
-          <p className="font-outfit font-bold text-2xl text-stone-900">{elapsed}s</p>
+          <p className="font-manrope text-xs text-stone-400 uppercase tracking-wider">
+            Time
+          </p>
+
+          <p className="font-outfit font-bold text-2xl text-stone-900">
+            {elapsed}s
+          </p>
         </div>
       </div>
 
       <div
         className="grid gap-3"
-        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, maxWidth: "340px" }}
+        style={{
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          maxWidth: "340px",
+        }}
       >
         {cards.map((card) => (
           <button
@@ -152,45 +219,15 @@ export default function ColorMemoryGame({ onScoreSubmit }) {
                 ? "border-transparent scale-105"
                 : "border-stone-200 bg-stone-100 hover:bg-stone-200 hover:scale-105"
             } ${card.matched ? "opacity-60" : ""}`}
-            style={card.flipped || card.matched ? { backgroundColor: card.color } : {}}
+            style={
+              card.flipped || card.matched
+                ? { backgroundColor: card.color }
+                : {}
+            }
             aria-label="card"
           />
         ))}
       </div>
-
-      {gameOver && (
-        <div className="text-center bg-white rounded-3xl border border-stone-100 p-8 shadow-xl w-full max-w-sm">
-          <p className="text-3xl mb-2">🎨</p>
-          <h3 className="font-outfit font-bold text-2xl text-stone-900 mb-1">Nicely done!</h3>
-          <p className="font-manrope text-stone-500 text-sm mb-1">{moves} moves · {elapsed}s</p>
-          <p className="font-outfit font-bold text-orange-500 text-xl mb-6">
-            Score: {Math.max(0, 1000 - moves * 10 - elapsed * 2)}
-          </p>
-          <div className="flex gap-3 justify-center">
-            <button
-              onClick={() => startGame(level)}
-              className="px-6 py-3 rounded-full bg-orange-500 text-white font-outfit font-semibold text-sm hover:bg-orange-600 transition-colors"
-            >
-              Play Again
-            </button>
-            <button
-              onClick={() => setLevel(null)}
-              className="px-6 py-3 rounded-full border border-stone-200 text-stone-600 font-outfit font-semibold text-sm hover:bg-stone-50 transition-colors"
-            >
-              Change Level
-            </button>
-          </div>
-        </div>
-      )}
-
-      {!gameOver && (
-        <button
-          onClick={() => setLevel(null)}
-          className="font-manrope text-sm text-stone-400 hover:text-stone-600 transition-colors"
-        >
-          ← Change Level
-        </button>
-      )}
     </div>
   );
 }
