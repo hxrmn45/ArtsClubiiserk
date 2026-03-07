@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Trophy, Gamepad2 } from "lucide-react";
 import { toast } from "sonner";
-import api from "@/lib/api";
-import ColorMemoryGame from "@/components/games/ColorMemoryGame";
-import BrushRushGame from "@/components/games/BrushRushGame";
+import api from "../lib/api";
+import ColorMemoryGame from "../components/games/ColorMemoryGame";
+import BrushRushGame from "../components/games/BrushRushGame";
 
 function Leaderboard({ gameName }) {
   const [scores, setScores] = useState([]);
@@ -20,6 +20,7 @@ function Leaderboard({ gameName }) {
         setLoading(false);
       }
     };
+
     load();
   }, [gameName]);
 
@@ -31,6 +32,7 @@ function Leaderboard({ gameName }) {
         <Trophy className="w-5 h-5 text-yellow-500" />
         <h3 className="font-outfit font-bold text-stone-900">Leaderboard</h3>
       </div>
+
       {loading ? (
         <div className="space-y-2">
           {[...Array(5)].map((_, i) => (
@@ -38,7 +40,9 @@ function Leaderboard({ gameName }) {
           ))}
         </div>
       ) : scores.length === 0 ? (
-        <p className="font-manrope text-stone-400 text-sm text-center py-4">No scores yet. Be the first!</p>
+        <p className="font-manrope text-stone-400 text-sm text-center py-4">
+          No scores yet. Be the first!
+        </p>
       ) : (
         <div className="space-y-2">
           {scores.map((s, i) => (
@@ -48,9 +52,14 @@ function Leaderboard({ gameName }) {
             >
               <div className="flex items-center gap-3">
                 <span className="text-lg w-6">{medals[i] || `${i + 1}.`}</span>
-                <span className="font-manrope text-sm font-medium text-stone-800">{s.user_name}</span>
+                <span className="font-manrope text-sm font-medium text-stone-800">
+                  {s.user_name}
+                </span>
               </div>
-              <span className="font-outfit font-bold text-orange-500">{s.score}</span>
+
+              <span className="font-outfit font-bold text-orange-500">
+                {s.score}
+              </span>
             </div>
           ))}
         </div>
@@ -84,8 +93,10 @@ export default function GamesPage() {
   const handleScoreSubmit = async ({ game_name, score, duration_seconds }) => {
     try {
       await api.post("/games/scores", { game_name, score, duration_seconds });
+
       toast.success(`Score of ${score} submitted!`);
-      setSubmitKey((k) => k + 1); // force leaderboard refresh
+
+      setSubmitKey((k) => k + 1);
       setLeaderboardGame(game_name);
     } catch {
       toast.error("Couldn't save your score.");
@@ -93,10 +104,15 @@ export default function GamesPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-12">
+
       <div className="mb-10">
-        <h1 className="font-outfit font-extrabold text-4xl text-stone-900 tracking-tight">Games Hub</h1>
-        <p className="font-manrope text-stone-500 mt-1">Play, compete, and climb the leaderboard.</p>
+        <h1 className="font-outfit font-extrabold text-4xl text-stone-900">
+          Games Hub
+        </h1>
+        <p className="font-manrope text-stone-500 mt-1">
+          Play, compete, and climb the leaderboard.
+        </p>
       </div>
 
       {!activeGame ? (
@@ -106,13 +122,20 @@ export default function GamesPage() {
               <button
                 key={game.id}
                 onClick={() => setActiveGame(game.id)}
-                className={`text-left p-8 rounded-3xl border-2 ${game.color} hover:-translate-y-1 hover:shadow-xl transition-all duration-300`}
+                className={`text-left p-8 rounded-3xl border-2 ${game.color} hover:-translate-y-1 hover:shadow-xl transition-all`}
               >
                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-outfit font-semibold mb-4 ${game.badge}`}>
                   {game.id}
                 </span>
-                <h3 className="font-outfit font-bold text-2xl text-stone-900 mb-2">{game.name}</h3>
-                <p className="font-manrope text-stone-500">{game.desc}</p>
+
+                <h3 className="font-outfit font-bold text-2xl text-stone-900 mb-2">
+                  {game.name}
+                </h3>
+
+                <p className="font-manrope text-stone-500">
+                  {game.desc}
+                </p>
+
                 <div className="mt-6 inline-flex items-center gap-2 text-sm font-outfit font-semibold text-stone-600">
                   <Gamepad2 className="w-4 h-4" /> Play Now →
                 </div>
@@ -120,17 +143,21 @@ export default function GamesPage() {
             ))}
           </div>
 
-          {/* Leaderboard section */}
           <div>
             <div className="flex items-center gap-4 mb-6">
-              <h2 className="font-outfit font-bold text-2xl text-stone-900">Leaderboard</h2>
+              <h2 className="font-outfit font-bold text-2xl text-stone-900">
+                Leaderboard
+              </h2>
+
               <div className="flex rounded-xl bg-stone-100 p-1">
                 {GAMES.map((g) => (
                   <button
                     key={g.id}
                     onClick={() => setLeaderboardGame(g.id)}
-                    className={`px-4 py-1.5 rounded-lg text-sm font-outfit font-medium transition-colors ${
-                      leaderboardGame === g.id ? "bg-white text-stone-900 shadow-sm" : "text-stone-500"
+                    className={`px-4 py-1.5 rounded-lg text-sm font-outfit font-medium ${
+                      leaderboardGame === g.id
+                        ? "bg-white text-stone-900 shadow-sm"
+                        : "text-stone-500"
                     }`}
                   >
                     {g.name}
@@ -138,8 +165,12 @@ export default function GamesPage() {
                 ))}
               </div>
             </div>
+
             <div className="max-w-md">
-              <Leaderboard key={`${leaderboardGame}-${submitKey}`} gameName={leaderboardGame} />
+              <Leaderboard
+                key={`${leaderboardGame}-${submitKey}`}
+                gameName={leaderboardGame}
+              />
             </div>
           </div>
         </>
@@ -147,25 +178,34 @@ export default function GamesPage() {
         <div>
           <button
             onClick={() => setActiveGame(null)}
-            className="mb-8 font-manrope text-sm text-stone-400 hover:text-stone-600 transition-colors"
+            className="mb-8 font-manrope text-sm text-stone-400 hover:text-stone-600"
           >
             ← Back to Games
           </button>
+
           <div className="flex flex-col lg:flex-row gap-10 items-start">
+
             <div className="flex-1 bg-white rounded-3xl border border-stone-100 p-8 shadow-sm">
               <h2 className="font-outfit font-bold text-2xl text-stone-900 mb-6">
                 {GAMES.find((g) => g.id === activeGame)?.name}
               </h2>
+
               {activeGame === "color-memory" && (
                 <ColorMemoryGame onScoreSubmit={handleScoreSubmit} />
               )}
+
               {activeGame === "brush-rush" && (
                 <BrushRushGame onScoreSubmit={handleScoreSubmit} />
               )}
             </div>
+
             <div className="w-full lg:w-72">
-              <Leaderboard key={`${activeGame}-${submitKey}`} gameName={activeGame} />
+              <Leaderboard
+                key={`${activeGame}-${submitKey}`}
+                gameName={activeGame}
+              />
             </div>
+
           </div>
         </div>
       )}
