@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Calendar, MapPin, Users, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-import api from "@/lib/api";
+import api from "../lib/api";
 
 function EventCard({ event, onToggleJoin }) {
   const [loading, setLoading] = useState(false);
