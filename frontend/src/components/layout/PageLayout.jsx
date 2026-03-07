@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Palette, Calendar, Gamepad2, Users, LogOut, Menu, X, LogIn } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 
 const NAV_LINKS = [
@@ -28,23 +28,17 @@ export const PageLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
-      {/* Navbar */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-stone-200/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
+
             <Link to="/" className="flex items-center gap-2 group">
-              <img
-  src="/logo.png"
-  alt="ArtsClub IISERK"
-  className="w-9 h-9 object-contain"
-/>
+              <img src="/logo.png" alt="ArtsClub IISERK" className="w-9 h-9 object-contain"/>
               <span className="font-outfit font-bold text-lg text-stone-900 tracking-tight hidden sm:block">
                 ArtsClub IISERK
               </span>
             </Link>
 
-            {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-1">
               {NAV_LINKS.map(({ to, label, icon: Icon }) => {
                 const active = location.pathname === to;
@@ -65,7 +59,6 @@ export const PageLayout = ({ children }) => {
               })}
             </nav>
 
-            {/* Auth */}
             <div className="hidden md:flex items-center gap-3">
               {isAuthenticated ? (
                 <>
@@ -91,7 +84,6 @@ export const PageLayout = ({ children }) => {
               )}
             </div>
 
-            {/* Mobile Menu Toggle */}
             <button
               className="md:hidden p-2 rounded-xl text-stone-600 hover:bg-stone-100 transition-colors"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -101,7 +93,6 @@ export const PageLayout = ({ children }) => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {menuOpen && (
           <div className="md:hidden border-t border-stone-100 bg-white px-4 py-4 flex flex-col gap-2">
             {NAV_LINKS.map(({ to, label, icon: Icon }) => (
@@ -119,6 +110,7 @@ export const PageLayout = ({ children }) => {
                 {label}
               </Link>
             ))}
+
             <div className="border-t border-stone-100 pt-2 mt-1">
               {isAuthenticated ? (
                 <button
@@ -143,7 +135,6 @@ export const PageLayout = ({ children }) => {
         )}
       </header>
 
-      {/* Page Content */}
       <main>{children}</main>
     </div>
   );
